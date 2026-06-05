@@ -2,9 +2,19 @@
     --cell-size: 150px;
     --cell-gap: 10px;
     --piece-thickness: 10px;
+
+    --board-color: gray;
+
+    --x-color: red;
+    --o-color: blue;
+
+    --x-hover-color: lightcoral;
+    --o-hover-color: lightblue;
+
+    --cell-hover-color: var(--x-hover-color);
 }
 
-.container {
+#board {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
@@ -18,7 +28,7 @@
     height: var(--cell-size);
     width: var(--cell-size);
     margin: var(--cell-gap);
-    background: lightgray;
+    background: var(--board-color);
 }
 
 .subcell {
@@ -32,11 +42,15 @@
     background: white;
 }
 
+.subcell:hover.open {
+    background: var(--cell-hover-color);
+}
+
 .x::before,
 .x::after {
     content: '';
     position: absolute;
-    background: red;
+    background: var(--x-color);
     width: var(--piece-thickness);
     height: var(--_cell-size);
     transform-origin: center;
@@ -60,5 +74,5 @@
     height: var(--size);
     translate: calc((var(--_cell-size) - var(--size)) / 2) calc((var(--_cell-size) - var(--size)) / 2);
     border-radius: 50%;
-    box-shadow: inset 0 0 0 var(--piece-thickness) blue;
+    box-shadow: inset 0 0 0 var(--piece-thickness) var(--o-color);
 }
