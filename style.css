@@ -1,6 +1,7 @@
 :root {
     --cell-size: 150px;
     --cell-gap: 10px;
+    --piece-thickness: 10px;
 }
 
 .container {
@@ -22,9 +23,42 @@
 
 .subcell {
     --_cell-size: calc((var(--cell-size) - var(--cell-gap) * 2) / 3);
+
+    position: relative;
     height: var(--_cell-size);
     width: var(--_cell-size);
     margin: calc(var(--cell-gap) / 3);
     line-height: 0px;
     background: white;
+}
+
+.x::before,
+.x::after {
+    content: '';
+    position: absolute;
+    background: red;
+    width: var(--piece-thickness);
+    height: var(--_cell-size);
+    transform-origin: center;
+    translate: calc(var(--_cell-size) / 2 - var(--piece-thickness) / 2) 0%;
+}
+
+.x::before {
+    transform: rotate(45deg);
+}
+
+.x::after {
+    transform: rotate(-45deg);
+}
+
+.o {
+    --size: calc(var(--_cell-size) / sqrt(2) + var(--piece-thickness) / sqrt(2));
+
+    position: absolute;
+    z-index: 1;
+    width: var(--size);
+    height: var(--size);
+    translate: calc((var(--_cell-size) - var(--size)) / 2) calc((var(--_cell-size) - var(--size)) / 2);
+    border-radius: 50%;
+    box-shadow: inset 0 0 0 var(--piece-thickness) blue;
 }

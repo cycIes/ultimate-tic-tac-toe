@@ -7,6 +7,9 @@ function createSubBoard(cell) {
         const div = document.createElement('div');
         div.classList.add('subcell');
         cell.appendChild(div);
+        const piece = document.createElement('div');
+        piece.classList.add('piece');
+        div.appendChild(piece);
     }
 }
 
@@ -33,3 +36,9 @@ function createBoard() {
 }
 
 createBoard();
+
+class game {
+    constructor() {
+        this.currentPlayer = 'X';
+    }
+}
