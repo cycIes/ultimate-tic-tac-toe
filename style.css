@@ -1,0 +1,30 @@
+:root {
+    --cell-size: 150px;
+    --cell-gap: 10px;
+}
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    width: calc(var(--cell-size) * 3 + var(--cell-gap) * 6);
+}
+
+.cell {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: repeat(3, 1fr);
+    height: var(--cell-size);
+    width: var(--cell-size);
+    margin: var(--cell-gap);
+    background: lightgray;
+}
+
+.subcell {
+    --_cell-size: calc((var(--cell-size) - var(--cell-gap) * 2) / 3);
+    height: var(--_cell-size);
+    width: var(--_cell-size);
+    margin: calc(var(--cell-gap) / 3);
+    line-height: 0px;
+    background: white;
+}
