@@ -25,11 +25,16 @@ class Game {
     }
 
     makeMove(board, id) {
+        if (this.gameOver) return;
+        
         console.log(board, id);
         console.log(this.currentPlayer);
 
         const cell = board.subboard[id];
         if (!cell.element.classList.contains('open')) return;
+
+        // text content
+        // textContainer.textContent = `${this.currentPlayer.id}'s turn`;
 
         const piece = cell.element.firstChild;
         piece.classList.add(this.currentPlayer.id.toLowerCase());
@@ -37,9 +42,13 @@ class Game {
         cell.value = this.currentPlayer.id;
 
         if (!board.full) {
-            board.full = checkFull(board);
+            board.full = checkFull(board.subboard);
         }
-        this.checkSubboardWin(board);
+        if (board.value === '') {
+            this.checkSubboardWin(board);
+        }
+
+        if (this.gameOver) return;
 
         this.availableSubboards[board.id] = !board.full;
         if (board.full) {
@@ -84,15 +93,16 @@ class Game {
     }
 
     checkSubboardWin(board) {
-        const playerPositions = board.subboard.map((subcell, index) => subcell.value === this.currentPlayer.id ? index : null).filter(value => value !== null);
+        const playerPositions = board.subboard.map((subcell, index) => subcell.value === this.currentPlayer.id ? index : '').filter(value => value !== '');
         if (!this.checkThreeInARow(playerPositions)) {
             console.log(board)
             if (board.full) {
-                board.value = 'draw';
+                board.value = 'XO';
                 const icon = document.createElement('div');
                 icon.classList.add('o');
                 board.element.appendChild(icon);
                 board.element.classList.add('draw', "x");
+                this.checkWin(cells);
             }
             return;
         }
@@ -105,9 +115,47 @@ class Game {
             icon.classList.add('o');
             board.element.appendChild(icon);
         }
+
+        this.checkWin(cells);
     }
 
     checkWin(board) {
+        const xPlayerPositions = board.map((subboard) => subboard.value.includes(this.x.id) ? subboard.id : '').filter(value => value !== '');
+        const oPlayerPositions = board.map((subboard) => subboard.value.includes(this.o.id) ? subboard.id : '').filter(value => value !== '');
+        console.log("hi")
+        console.log(xPlayerPositions)
+        console.log(oPlayerPositions)
+
+        let winner = null;
+        if (this.checkThreeInARow(xPlayerPositions)) {
+            winner = this.x;
+        } 
+        
+        if(this.checkThreeInARow(oPlayerPositions)) {
+            if (winner !== null) {
+                this.gameOver = true;
+                textContainer.textContent = `It's a draw!`;
+                return;
+            }
+            winner = this.o;
+        }
+
+        if (winner !== null) {
+            this.gameOver = true;
+            textContainer.textContent = `${winner.id} wins!`;
+            cells.forEach(cell => {
+                cell.element.classList.remove('open');
+                cell.subboard.forEach(subcell => {
+                    subcell.element.classList.remove('open');
+                })
+            });
+            return;
+        }
+
+        if (checkFull(board)) {
+            this.gameOver = true;
+            textContainer.textContent = `It's a draw!`;
+        }
     }
 }
 
@@ -127,7 +175,7 @@ function createSubBoard(element, cell) {
 
         subcell = {
             element: div,
-            value: null
+            value: ''
         };
         subboard.push(subcell);
     }
@@ -145,7 +193,7 @@ function createBoard() {
             id: i,
             element: div,
             subboard: [],
-            value: null,
+            value: '',
             full: false
         };
         cell.subboard = createSubBoard(div, cell);
@@ -184,7 +232,7 @@ function restrictToSubBoards(boards) {
 }
 
 function checkFull(board) {
-    return board.subboard.every(subcell => subcell.value !== null);
+    return board.every(cell => cell.value !== '');
 }
 
 createBoard();
