@@ -6,38 +6,79 @@ cells = [];
 
 class Game {
     constructor() {
-        this.currentPlayer = 'X';
+        this.x = {
+            id: 'X',
+            boards: Array(9).fill(true),
+        };
+        this.o = {
+            id: 'O',
+            boards: Array(9).fill(true),
+        };
+        this.currentPlayer = this.x;
+        this.availableSubboards = Array(9).fill(true);
+        this.gameOver = false;
     }
 
     switchPlayer() {
-        this.currentPlayer = this.currentPlayer === 'X' ? 'O' : 'X';
-        root.style.setProperty('--cell-hover-color', `var(--${this.currentPlayer.toLowerCase()}-hover-color)`);
+        this.currentPlayer = this.currentPlayer.id === 'X' ? this.o : this.x;
+        root.style.setProperty('--cell-hover-color', `var(--${this.currentPlayer.id.toLowerCase()}-hover-color)`);
     }
 
-    makeMove(cell, id) {
-        const piece = cell.firstChild;
-        if (!cell.classList.contains('open')) return;
-        piece.classList.add(this.currentPlayer.toLowerCase());
-        cell.classList.remove('open');
+    makeMove(board, id) {
+        console.log(board, id);
+        console.log(this.currentPlayer);
+
+        const cell = board.subboard[id];
+        if (!cell.element.classList.contains('open')) return;
+
+        const piece = cell.element.firstChild;
+        piece.classList.add(this.currentPlayer.id.toLowerCase());
+        cell.element.classList.remove('open');
+        cell.value = this.currentPlayer.id;
+
+        let boardFull = checkFull(board);
+        this.availableSubboards[board.id] = !boardFull;
+        if (boardFull) {
+            if (this.x.boards[board.id]) {
+                this.x.boards = this.availableSubboards.map((available) => available);
+            }
+            if (this.o.boards[board.id]) {
+                this.o.boards = this.availableSubboards.map((available) => available);
+            }
+        }
+
+        if (this.availableSubboards[id]) {
+            this.currentPlayer.boards = Array(9).fill(false);
+            this.currentPlayer.boards[id] = true;
+        } else {
+            this.currentPlayer.boards = this.availableSubboards.map((available) => available);
+
+        }
+
         this.switchPlayer();
-        restrictBoardToSubBoard(id);
+        restrictToSubBoards(this.currentPlayer.boards);
     }
 }
 
-game = new Game();
+const game = new Game();
 
-function createSubBoard(cell) {
+function createSubBoard(element, cell) {
     subboard = [];
 
     for (let i = 0; i < 9; i++) {
         const div = document.createElement('div');
         div.classList.add('subcell', 'open');
-        cell.appendChild(div);
-        div.addEventListener('click', () => game.makeMove(div, i));
+        element.appendChild(div);
+        div.addEventListener('click', () => game.makeMove(cell, i));
         const piece = document.createElement('div');
         piece.classList.add('piece');
         div.appendChild(piece);
-        subboard.push(div);
+
+        subcell = {
+            element: div,
+            value: null
+        };
+        subboard.push(subcell);
     }
 
     return subboard;
@@ -46,44 +87,52 @@ function createSubBoard(cell) {
 function createBoard() {
     for (let i = 0; i < 9; i++) {
         const div = document.createElement('div');
-        div.classList.add('cell');
+        div.classList.add('cell', 'open');
         board.appendChild(div);
 
-        subboard = createSubBoard(div);
-
         cell = {
+            id: i,
             element: div,
-            board: subboard,
+            subboard: [],
             value: null
         };
+        cell.subboard = createSubBoard(div, cell);
         cells.push(cell);
     }
 }
 
 function unlockSubBoard(cell) {
-    cell.board.forEach(subcell => {
-        if (!'xo'.includes(cell.className)) {
-            subcell.classList.add('open');
+    cell.element.classList.add('open');
+    cell.subboard.forEach(subcell => {
+        if (!(subcell.element.firstChild.className.includes('x') || subcell.element.firstChild.className.includes('o'))) {
+            subcell.element.classList.add('open');
         }
     });
 }
 
 function lockSubBoard(cell) {
-    cell.board.forEach(subcell => {
-        if (subcell.className.includes('open')) {
-            subcell.classList.remove('open');
+    if (cell.element.className.includes('open')) {
+        cell.element.classList.remove('open');
+    }
+    cell.subboard.forEach(subcell => {
+        if (subcell.element.className.includes('open')) {
+            subcell.element.classList.remove('open');
         }
     });
 }
 
-function restrictBoardToSubBoard(index) {
+function restrictToSubBoards(boards) {
     cells.forEach((cell, i) => {
-        if (i === index) {
+        if (boards[i]) {
             unlockSubBoard(cell);
         } else {
             lockSubBoard(cell);
         }   
     }); 
+}
+
+function checkFull(board) {
+    return board.subboard.every(subcell => subcell.value !== null);
 }
 
 createBoard();

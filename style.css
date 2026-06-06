@@ -1,9 +1,10 @@
 :root {
-    --cell-size: 150px;
-    --cell-gap: 10px;
-    --piece-thickness: 10px;
+    --cell-size: 10rem;
+    --cell-gap: 0.5rem;
+    --piece-thickness: 0.5rem;
 
     --board-color: gray;
+    --background-color: white;
 
     --x-color: red;
     --o-color: blue;
@@ -19,6 +20,8 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     width: calc(var(--cell-size) * 3 + var(--cell-gap) * 6);
+    background: var(--board-color);
+    box-shadow: inset 0 0 0 var(--cell-gap) var(--background-color);
 }
 
 .cell {
@@ -29,6 +32,7 @@
     width: var(--cell-size);
     margin: var(--cell-gap);
     background: var(--board-color);
+    /* box-shadow: inset 0 0 0 calc(var(--cell-gap) / 2) var(--background-color); */
 }
 
 .subcell {
@@ -39,7 +43,7 @@
     width: var(--_cell-size);
     margin: calc(var(--cell-gap) / 3);
     line-height: 0px;
-    background: white;
+    background: var(--background-color);
 }
 
 .subcell:hover.open {
@@ -75,4 +79,8 @@
     translate: calc((var(--_cell-size) - var(--size)) / 2) calc((var(--_cell-size) - var(--size)) / 2);
     border-radius: 50%;
     box-shadow: inset 0 0 0 var(--piece-thickness) var(--o-color);
+}
+
+.cell.open {
+    box-shadow: inset 0 0 0 calc(var(--cell-gap) / 3) var(--cell-hover-color), 0 0 0 calc(var(--cell-gap) / 3) var(--cell-hover-color);
 }
