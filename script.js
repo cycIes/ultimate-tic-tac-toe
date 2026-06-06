@@ -36,9 +36,13 @@ class Game {
         cell.element.classList.remove('open');
         cell.value = this.currentPlayer.id;
 
-        let boardFull = checkFull(board);
-        this.availableSubboards[board.id] = !boardFull;
-        if (boardFull) {
+        if (!board.full) {
+            board.full = checkFull(board);
+        }
+        this.checkSubboardWin(board);
+
+        this.availableSubboards[board.id] = !board.full;
+        if (board.full) {
             if (this.x.boards[board.id]) {
                 this.x.boards = this.availableSubboards.map((available) => available);
             }
@@ -57,6 +61,53 @@ class Game {
 
         this.switchPlayer();
         restrictToSubBoards(this.currentPlayer.boards);
+    }
+
+    checkThreeInARow(board) {
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6]
+        ];
+
+        for (let i = 0; i < winConditions.length; i++) {
+            if (winConditions[i].every(value => board.includes(value))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    checkSubboardWin(board) {
+        const playerPositions = board.subboard.map((subcell, index) => subcell.value === this.currentPlayer.id ? index : null).filter(value => value !== null);
+        if (!this.checkThreeInARow(playerPositions)) {
+            console.log(board)
+            if (board.full) {
+                board.value = 'draw';
+                const icon = document.createElement('div');
+                icon.classList.add('o');
+                board.element.appendChild(icon);
+                board.element.classList.add('draw', "x");
+            }
+            return;
+        }
+        board.value = this.currentPlayer.id;
+
+        if (board.value === 'X') {
+            board.element.classList.add(this.currentPlayer.id.toLowerCase());
+        } else {
+            const icon = document.createElement('div');
+            icon.classList.add('o');
+            board.element.appendChild(icon);
+        }
+    }
+
+    checkWin(board) {
     }
 }
 
@@ -94,7 +145,8 @@ function createBoard() {
             id: i,
             element: div,
             subboard: [],
-            value: null
+            value: null,
+            full: false
         };
         cell.subboard = createSubBoard(div, cell);
         cells.push(cell);
