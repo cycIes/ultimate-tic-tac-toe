@@ -1,4 +1,5 @@
 const root = document.documentElement;
+const container = document.querySelector('#container');
 const board = document.querySelector('#board');
 const textContainer = document.querySelector('#text');
 
@@ -17,11 +18,20 @@ class Game {
         this.currentPlayer = this.x;
         this.availableSubboards = Array(9).fill(true);
         this.gameOver = false;
+
+        cells = [];
+        createBoard();
+
+        // text content
+        textContainer.textContent = `${this.currentPlayer.id}'s turn`;
     }
 
     switchPlayer() {
         this.currentPlayer = this.currentPlayer.id === 'X' ? this.o : this.x;
         root.style.setProperty('--cell-hover-color', `var(--${this.currentPlayer.id.toLowerCase()}-hover-color)`);
+
+        // text content
+        textContainer.textContent = `${this.currentPlayer.id}'s turn`;
     }
 
     makeMove(board, id) {
@@ -32,9 +42,6 @@ class Game {
 
         const cell = board.subboard[id];
         if (!cell.element.classList.contains('open')) return;
-
-        // text content
-        // textContainer.textContent = `${this.currentPlayer.id}'s turn`;
 
         const piece = cell.element.firstChild;
         piece.classList.add(this.currentPlayer.id.toLowerCase());
@@ -48,7 +55,21 @@ class Game {
             this.checkSubboardWin(board);
         }
 
-        if (this.gameOver) return;
+        if (this.gameOver) {
+            const replayButton = document.createElement('button');
+            replayButton.textContent = 'Play Again';
+            replayButton.className = 'replay-button';
+            replayButton.addEventListener('click', () => {
+                game = new Game();
+                replayButton.remove();
+            });
+            const replayIcon = document.createElement('img');
+            replayIcon.src = 'assets/replay.svg';
+            replayIcon.alt = 'Replay Icon';
+            replayButton.appendChild(replayIcon);
+            container.appendChild(replayButton);
+            return;
+        }
 
         this.availableSubboards[board.id] = !board.full && (board.value === '');
         if (board.full || (board.value !== '')) {
@@ -159,7 +180,7 @@ class Game {
     }
 }
 
-const game = new Game();
+game = new Game();
 
 function createSubBoard(element, cell) {
     subboard = [];
@@ -184,6 +205,7 @@ function createSubBoard(element, cell) {
 }
 
 function createBoard() {
+    board.replaceChildren();
     for (let i = 0; i < 9; i++) {
         const div = document.createElement('div');
         div.classList.add('cell', 'open');
@@ -234,5 +256,3 @@ function restrictToSubBoards(boards) {
 function checkFull(board) {
     return board.every(cell => cell.value !== '');
 }
-
-createBoard();

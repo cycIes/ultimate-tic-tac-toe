@@ -1,5 +1,5 @@
 :root {
-    --cell-size: 9rem;
+    --cell-size: 8rem;
     --cell-gap: 1.5rem;
 
     --board-color-large: #69627F;
@@ -18,10 +18,10 @@
     --gradient-purple: #7E56E4;
 }
 
-.inclusive-sans-regular {
+.inclusive-sans-bold {
   font-family: "Inclusive Sans", sans-serif;
   font-optical-sizing: auto;
-  font-weight: 300;
+  font-weight: 600;
   font-style: normal;
 }
 
@@ -144,7 +144,7 @@ body {
 
 h1 {
     font-family: "Fredoka", sans-serif;
-    font-size: 3rem;
+    font-size: 2.75rem;
     text-align: center;
     margin-bottom: 2rem;
     background: var(--gradient-purple);
@@ -153,4 +153,31 @@ h1 {
     background-clip: text;
     -webkit-text-fill-color: transparent;
     -moz-text-fill-color: transparent;
+    filter: drop-shadow(0 2px 4px rgb(0 0 0 / 25%));
+}
+
+p {
+    font-family: "Inclusive Sans", sans-serif;
+    font-size: 1.5rem;
+    text-align: center;
+    font-weight: 600;
+}
+
+button {
+    font-family: "Inclusive Sans", sans-serif;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--background-color);
+    padding: 0.8rem 1rem;
+    background-image: linear-gradient(90deg, var(--gradient-pink), var(--gradient-purple));
+    border-radius: 10px;
+    border: none;
+
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+button img {
+    height: 80%;
 }
