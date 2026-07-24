@@ -50,8 +50,8 @@ class Game {
 
         if (this.gameOver) return;
 
-        this.availableSubboards[board.id] = !board.full;
-        if (board.full) {
+        this.availableSubboards[board.id] = !board.full && (board.value === '');
+        if (board.full || (board.value !== '')) {
             if (this.x.boards[board.id]) {
                 this.x.boards = this.availableSubboards.map((available) => available);
             }
@@ -100,7 +100,7 @@ class Game {
                 board.value = 'XO';
                 const icon = document.createElement('div');
                 icon.classList.add('o');
-                board.element.appendChild(icon);
+                board.element.insertBefore(icon, board.element.firstChild);
                 board.element.classList.add('draw', "x");
                 this.checkWin(cells);
             }
@@ -113,7 +113,7 @@ class Game {
         } else {
             const icon = document.createElement('div');
             icon.classList.add('o');
-            board.element.appendChild(icon);
+            board.element.insertBefore(icon, board.element.firstChild);
         }
 
         this.checkWin(cells);

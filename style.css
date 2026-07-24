@@ -132,8 +132,8 @@ body {
     z-index: 3;
 }
 
-.cell.x::before, .cell.x::after, .cell > .o {
-    opacity: 50%;
+.cell.x .subcell, .cell > .o ~ .subcell {
+    opacity: 75%;
 }
 
 h1 {
