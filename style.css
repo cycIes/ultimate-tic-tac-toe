@@ -156,6 +156,10 @@ h1 {
     filter: drop-shadow(0 2px 4px rgb(0 0 0 / 25%));
 }
 
+#text {
+    margin: 1rem 0;
+}
+
 p {
     font-family: "Inclusive Sans", sans-serif;
     font-size: 1.5rem;
@@ -178,6 +182,27 @@ button {
     gap: 8px;
 }
 
+button:hover {
+    cursor: pointer;
+    filter: brightness(1.1);
+    box-shadow: 0 2px 8px rgb(94 8 134 / 50%)
+}
+
+button:active {
+    filter: brightness(0.9);
+    box-shadow: 0 1px 4px rgb(94 8 134 / 50%)
+}
+
+button:focus-visible {
+    outline: 2px solid var(--gradient-purple);
+    outline-offset: 2px;
+}
+
 button img {
     height: 80%;
+}
+
+button:active img {
+    transition: transform 0.1s ease-out;
+    transform: rotate(-360deg);
 }

@@ -2,6 +2,13 @@ const root = document.documentElement;
 const container = document.querySelector('#container');
 const board = document.querySelector('#board');
 const textContainer = document.querySelector('#text');
+const replayButton = document.querySelector('#reset');
+const replayButtonText = replayButton.querySelector('span');
+
+replayButton.addEventListener('click', () => {
+    replayButtonText.textContent = 'Reset';
+    game = new Game();
+});
 
 cells = [];
 
@@ -24,6 +31,8 @@ class Game {
 
         // text content
         textContainer.textContent = `${this.currentPlayer.id}'s turn`;
+
+        root.style.setProperty('--cell-hover-color', `var(--${this.currentPlayer.id.toLowerCase()}-hover-color)`);
     }
 
     switchPlayer() {
@@ -56,18 +65,7 @@ class Game {
         }
 
         if (this.gameOver) {
-            const replayButton = document.createElement('button');
-            replayButton.textContent = 'Play Again';
-            replayButton.className = 'replay-button';
-            replayButton.addEventListener('click', () => {
-                game = new Game();
-                replayButton.remove();
-            });
-            const replayIcon = document.createElement('img');
-            replayIcon.src = 'assets/replay.svg';
-            replayIcon.alt = 'Replay Icon';
-            replayButton.appendChild(replayIcon);
-            container.appendChild(replayButton);
+            replayButtonText.textContent = 'Play Again';
             return;
         }
 
