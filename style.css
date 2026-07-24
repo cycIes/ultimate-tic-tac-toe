@@ -2,16 +2,20 @@
     --cell-size: 10rem;
     --cell-gap: 0.5rem;
 
-    --board-color: gray;
-    --background-color: white;
+    --board-color-large: #69627F;
+    --board-color-small: #A99FB4;
+    --background-color: #F6F6F6;
 
-    --x-color: red;
-    --o-color: blue;
+    --x-color: #FF6EC5;
+    --o-color: #626AFF;
 
-    --x-hover-color: lightcoral;
-    --o-hover-color: lightblue;
+    --x-hover-color: #ffaedf;
+    --o-hover-color: #9398fe;
 
     --cell-hover-color: var(--x-hover-color);
+
+    --gradient-pink: #D1659F;
+    --gradient-purple: #7E56E4;
 }
 
 #board {
@@ -20,7 +24,7 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     width: calc(var(--cell-size) * 3 + var(--cell-gap) * 6);
-    background: var(--board-color);
+    background: var(--board-color-large);
     box-shadow: inset 0 0 0 var(--cell-gap) var(--background-color);
 }
 
@@ -34,7 +38,7 @@
     height: var(--cell-size);
     width: var(--cell-size);
     margin: var(--cell-gap);
-    background: var(--board-color);
+    background: var(--board-color-small);
     /* box-shadow: inset 0 0 0 calc(var(--cell-gap) / 2) var(--background-color); */
 }
 
