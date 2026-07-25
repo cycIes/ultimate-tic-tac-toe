@@ -54,18 +54,17 @@ body {
 /* Board components */
 
 #board {
-    --size: calc(var(--cell-size) * 3 + var(--cell-gap) * 2);
+    --max-size: calc(var(--cell-size) * 3 + var(--cell-gap) * 2);
+    --size: clamp(100px, 75vw, var(--max-size));
 
     display: grid;
     position: relative;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    /* overflow: hidden; */
     height: var(--size);
     width: var(--size);
     gap: var(--cell-gap);
     background: var(--board-color-large);
-    /* box-shadow: inset 0 0 0 var(--cell-gap) var(--background-color); */
 }
 
 .win-line {
@@ -133,7 +132,8 @@ body {
 /* Cells */
 
 .cell {
-    --_cell-size: var(--cell-size);
+    /* --_cell-size: var(--cell-size); */
+    --_cell-size: calc(var(--size) / 3 - var(--cell-gap) * 2 / 3);
     --piece-thickness: 1rem;
 
     display: grid;
@@ -143,12 +143,12 @@ body {
     outline: 5px solid var(--background-color);
     align-content: center;
     justify-content: center;
-    /* box-shadow: inset 0 0 0 calc(var(--cell-gap) / 2) var(--background-color); */
 }
 
 .subcell {
     --piece-thickness: 0.5rem;
-    --_cell-size: calc(var(--cell-size) / 3);
+    /* --_cell-size: calc(var(--cell-size) / 3); */
+    --_cell-size: calc(var(--size) / 9 - var(--cell-gap) / 3);
 
     position: relative;
     height: var(--_cell-size);
@@ -218,8 +218,6 @@ body {
 }
 
 .cell.open .subcell{
-    /* box-shadow: inset 0 0 0 calc(var(--cell-gap) / 3) var(--cell-hover-color), 0 0 0 calc(var(--cell-gap) / 3) var(--cell-hover-color); */
-    /* outline: 5px solid var(--cell-hover-color); */
     border: 2.5px solid var(--cell-hover-color);
 }
 
@@ -235,7 +233,7 @@ body {
 
 h1 {
     font-family: "Fredoka", sans-serif;
-    font-size: 2.75rem;
+    font-size: clamp(1rem, 8vw, 2.75rem);
     text-align: center;
     margin-bottom: 2rem;
     background: var(--gradient-purple);
@@ -254,7 +252,7 @@ h1 {
 
 p {
     font-family: "Inclusive Sans", sans-serif;
-    font-size: 1.5rem;
+    font-size: clamp(1rem, 4vw, 1.5rem);
     text-align: center;
     font-weight: 600;
 }
@@ -263,7 +261,7 @@ p {
 
 button {
     font-family: "Inclusive Sans", sans-serif;
-    font-size: 1.25rem;
+    font-size: clamp(0.875rem, 4vw, 1.5rem);
     font-weight: 600;
     color: var(--background-color);
     padding: 0.8rem 1rem;
