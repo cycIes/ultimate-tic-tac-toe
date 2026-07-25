@@ -261,10 +261,10 @@ p {
 
 button {
     font-family: "Inclusive Sans", sans-serif;
-    font-size: clamp(0.875rem, 4vw, 1.5rem);
+    font-size: clamp(0.75rem, 4vw, 1.25rem);
     font-weight: 600;
     color: var(--background-color);
-    padding: 0.8rem 1rem;
+    padding: min(0.8rem, 6vw) min(1rem, 9vw);
     background-image: linear-gradient(90deg, var(--gradient-pink), var(--gradient-purple));
     border-radius: 10px;
     border: none;
