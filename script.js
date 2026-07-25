@@ -1,6 +1,33 @@
 const root = document.documentElement;
+const container = document.querySelector('#container');
 const board = document.querySelector('#board');
 const textContainer = document.querySelector('#text');
+const replayButton = document.querySelector('#reset');
+const replayButtonText = replayButton.querySelector('span');
+
+replayButton.addEventListener('click', () => {
+    replayButtonText.textContent = 'Reset';
+    game = new Game();
+});
+
+const winConditions = [
+    { name: 'row1',
+        positions: [0, 1, 2] },
+    { name: 'row2',
+        positions: [3, 4, 5] },
+    { name: 'row3',
+        positions: [6, 7, 8] },
+    { name: 'col1',
+        positions: [0, 3, 6] },
+    { name: 'col2',
+        positions: [1, 4, 7] },
+    { name: 'col3',
+        positions: [2, 5, 8] },
+    { name: 'diag1',
+        positions: [0, 4, 8] },
+    { name: 'diag2',
+        positions: [2, 4, 6] }
+];
 
 cells = [];
 
@@ -17,24 +44,33 @@ class Game {
         this.currentPlayer = this.x;
         this.availableSubboards = Array(9).fill(true);
         this.gameOver = false;
+        this.winner = null;
+
+        cells = [];
+        createBoard();
+
+        // text content
+        textContainer.textContent = `${this.currentPlayer.id}'s turn`;
+
+        root.style.setProperty('--cell-hover-color', `var(--${this.currentPlayer.id.toLowerCase()}-hover-color)`);
     }
 
     switchPlayer() {
         this.currentPlayer = this.currentPlayer.id === 'X' ? this.o : this.x;
         root.style.setProperty('--cell-hover-color', `var(--${this.currentPlayer.id.toLowerCase()}-hover-color)`);
+
+        // text content
+        textContainer.textContent = `${this.currentPlayer.id}'s turn`;
     }
 
     makeMove(board, id) {
         if (this.gameOver) return;
         
-        console.log(board, id);
-        console.log(this.currentPlayer);
+        // console.log(board, id);
+        // console.log(this.currentPlayer);
 
         const cell = board.subboard[id];
         if (!cell.element.classList.contains('open')) return;
-
-        // text content
-        // textContainer.textContent = `${this.currentPlayer.id}'s turn`;
 
         const piece = cell.element.firstChild;
         piece.classList.add(this.currentPlayer.id.toLowerCase());
@@ -48,10 +84,17 @@ class Game {
             this.checkSubboardWin(board);
         }
 
-        if (this.gameOver) return;
+        if (this.gameOver) {
+            const playerPositions = board.subboard.map((subcell, index) => subcell.value === this.currentPlayer.id ? index : '').filter(value => value !== '');
+            if (this.winner !== null) {
+                displayWinLines();
+            }
+            replayButtonText.textContent = 'Play Again';
+            return;
+        }
 
-        this.availableSubboards[board.id] = !board.full;
-        if (board.full) {
+        this.availableSubboards[board.id] = !board.full && (board.value === '');
+        if (board.full || (board.value !== '')) {
             if (this.x.boards[board.id]) {
                 this.x.boards = this.availableSubboards.map((available) => available);
             }
@@ -72,20 +115,9 @@ class Game {
         restrictToSubBoards(this.currentPlayer.boards);
     }
 
-    checkThreeInARow(board) {
-        const winConditions = [
-            [0, 1, 2],
-            [3, 4, 5],
-            [6, 7, 8],
-            [0, 3, 6],
-            [1, 4, 7],
-            [2, 5, 8],
-            [0, 4, 8],
-            [2, 4, 6]
-        ];
-
+    checkThreeInARow(positions) {
         for (let i = 0; i < winConditions.length; i++) {
-            if (winConditions[i].every(value => board.includes(value))) {
+            if (winConditions[i].positions.every(value => positions.includes(value))) {
                 return true;
             }
         }
@@ -95,12 +127,12 @@ class Game {
     checkSubboardWin(board) {
         const playerPositions = board.subboard.map((subcell, index) => subcell.value === this.currentPlayer.id ? index : '').filter(value => value !== '');
         if (!this.checkThreeInARow(playerPositions)) {
-            console.log(board)
+            // console.log(board)
             if (board.full) {
                 board.value = 'XO';
                 const icon = document.createElement('div');
                 icon.classList.add('o');
-                board.element.appendChild(icon);
+                board.element.insertBefore(icon, board.element.firstChild);
                 board.element.classList.add('draw', "x");
                 this.checkWin(cells);
             }
@@ -113,7 +145,7 @@ class Game {
         } else {
             const icon = document.createElement('div');
             icon.classList.add('o');
-            board.element.appendChild(icon);
+            board.element.insertBefore(icon, board.element.firstChild);
         }
 
         this.checkWin(cells);
@@ -122,27 +154,26 @@ class Game {
     checkWin(board) {
         const xPlayerPositions = board.map((subboard) => subboard.value.includes(this.x.id) ? subboard.id : '').filter(value => value !== '');
         const oPlayerPositions = board.map((subboard) => subboard.value.includes(this.o.id) ? subboard.id : '').filter(value => value !== '');
-        console.log("hi")
-        console.log(xPlayerPositions)
-        console.log(oPlayerPositions)
+        // console.log(xPlayerPositions)
+        // console.log(oPlayerPositions)
 
-        let winner = null;
         if (this.checkThreeInARow(xPlayerPositions)) {
-            winner = this.x;
+            this.winner = this.x;
         } 
         
         if(this.checkThreeInARow(oPlayerPositions)) {
-            if (winner !== null) {
+            if (this.winner !== null) {
                 this.gameOver = true;
+                this.winner = null;
                 textContainer.textContent = `It's a draw!`;
                 return;
             }
-            winner = this.o;
+            this.winner = this.o;
         }
 
-        if (winner !== null) {
+        if (this.winner !== null) {
             this.gameOver = true;
-            textContainer.textContent = `${winner.id} wins!`;
+            textContainer.textContent = `${this.winner.id} wins!`;
             cells.forEach(cell => {
                 cell.element.classList.remove('open');
                 cell.subboard.forEach(subcell => {
@@ -159,7 +190,7 @@ class Game {
     }
 }
 
-const game = new Game();
+game = new Game();
 
 function createSubBoard(element, cell) {
     subboard = [];
@@ -184,6 +215,7 @@ function createSubBoard(element, cell) {
 }
 
 function createBoard() {
+    board.replaceChildren();
     for (let i = 0; i < 9; i++) {
         const div = document.createElement('div');
         div.classList.add('cell', 'open');
@@ -235,4 +267,14 @@ function checkFull(board) {
     return board.every(cell => cell.value !== '');
 }
 
-createBoard();
+function displayWinLines() {
+    const positions = cells.map((subboard) => subboard.value.includes(game.currentPlayer.id) ? subboard.id : '').filter(value => value !== '');
+
+    for (let i = 0; i < winConditions.length; i++) {
+        if (winConditions[i].positions.every(value => positions.includes(value))) {
+            const winLine = document.createElement('div');
+            winLine.classList.add('win-line', winConditions[i].name);
+            board.appendChild(winLine);
+        }
+    }
+}
