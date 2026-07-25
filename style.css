@@ -19,6 +19,8 @@
 
     --text-dark: #1D1537;
     --text-light: var(--background-color);
+
+    interpolate-size: allow-keywords;
 }
 
 .inclusive-sans-bold {
@@ -49,18 +51,86 @@ body {
     height: 100vh;
 }
 
+/* Board components */
+
 #board {
+    --size: calc(var(--cell-size) * 3 + var(--cell-gap) * 2);
+
     display: grid;
     position: relative;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
     /* overflow: hidden; */
-    height: calc(var(--cell-size) * 3 + var(--cell-gap) * 2);
-    width: calc(var(--cell-size) * 3 + var(--cell-gap) * 2);
+    height: var(--size);
+    width: var(--size);
     gap: var(--cell-gap);
     background: var(--board-color-large);
     /* box-shadow: inset 0 0 0 var(--cell-gap) var(--background-color); */
 }
+
+.win-line {
+    --thickness: 2rem;
+
+    position: absolute;
+    content: '';
+    z-index: 1;
+    width: var(--size);
+    height: var(--thickness);
+    background-color: var(--cell-hover-color);
+    opacity: 0.75;
+
+    transition: width 0.3s ease;
+
+    @starting-style {
+        width: 0;
+    }
+}
+
+/* Board ending line */
+
+.row1 {
+    translate: 0 calc(var(--cell-size) / 2 - var(--thickness) / 2);
+}
+
+.row2 {
+    translate: 0 calc(var(--size) / 2 - var(--thickness) / 2);
+}
+
+.row3 {
+    translate: 0 calc(var(--size) - var(--cell-size) / 2 - var(--thickness) / 2);
+}
+
+.col1 {
+    rotate: 90deg;
+    translate: calc(var(--cell-size) / 2) calc(var(--thickness) / -2);
+    transform-origin: left;
+}
+
+.col2 {
+    rotate: 90deg;
+    translate: calc(var(--size) / 2) calc(var(--thickness) / -2);
+    transform-origin: left;
+}
+
+.col3 {
+    rotate: 90deg;
+    translate: calc(var(--size)  - var(--cell-size) / 2) calc(var(--thickness) / -2);
+    transform-origin: left;
+}
+
+.diag1 {
+    rotate: 45deg;
+    translate: calc(var(--cell-size) / 2) calc(var(--cell-size) / 2 + var(--thickness) / -2);
+    transform-origin: left;
+}
+
+.diag2 {
+    rotate: 135deg;
+    translate: calc(var(--size) - var(--cell-size) / 2) calc(var(--cell-size) / 2 + var(--thickness) / -2);
+    transform-origin: left;
+}
+
+/* Cells */
 
 .cell {
     --_cell-size: var(--cell-size);
@@ -92,6 +162,8 @@ body {
 .subcell:hover.open {
     background: var(--cell-hover-color);
 }
+
+/* Pieces */
 
 .x::before,
 .x::after {
@@ -159,6 +231,8 @@ body {
     opacity: 75%;
 }
 
+/* Text */
+
 h1 {
     font-family: "Fredoka", sans-serif;
     font-size: 2.75rem;
@@ -184,6 +258,8 @@ p {
     text-align: center;
     font-weight: 600;
 }
+
+/* Buttons */
 
 button {
     font-family: "Inclusive Sans", sans-serif;
